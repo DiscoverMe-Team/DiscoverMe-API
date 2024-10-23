@@ -47,12 +47,11 @@ Before getting started, ensure you have the following tools installed:
 
 4. **Set Up the Database**
 
-   - If you're using SQLite (default), no additional setup is required.
-   - For PostgreSQL or another database, modify the `DATABASES` setting in `settings.py`.
+   - We're using SQLite for local developement, leave the PSQL databse integration to me!
 
 5. **Run Migrations**
 
-   To set up the initial database schema, run:
+   Before running, you will need to set up the initial database schema for your db file, run:
 
    ```
    python manage.py makemigrations
