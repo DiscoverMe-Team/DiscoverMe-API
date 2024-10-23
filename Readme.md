@@ -4,7 +4,7 @@
 When developing your issue, make sure you switch to the branch that corresponds to your issue. For example:
    ```
    git pull
-   git chekoout Issue-3 # This will move you to a branch dedicated to your issue so that you wont have any merge cnflicts when developing
+   git checkout Issue-3 # This will move you to a branch dedicated to your issue so that you wont have any merge cnflicts when developing
    ```
 Now you are on branch Isse-3. once that is done, commit your change, then push it.
    ```
