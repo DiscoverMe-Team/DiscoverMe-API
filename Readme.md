@@ -10,7 +10,7 @@ This guide will help team members with little to no experience in Django get sta
 ## Prerequisites
 
 Before getting started, ensure you have the following tools installed:
-- **Python 3.8+**
+- **Python 3.12+**
 - **pip** (Python package manager)
 - **Virtualenv** (Optional but recommended)
 - **PostgreSQL** (or other database, if not using SQLite)
