@@ -44,3 +44,34 @@ class GoalViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class InsightViewSet(viewsets.ModelViewSet):
+    serializer_class = InsightSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Insight.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class PHQ9ViewSet(viewsets.ModelViewSet):
+    serializer_class = PHQ9Serializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class GAD7ViewSet(viewsets.ModelViewSet):
+    serializer_class = GAD7Serializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class PerceivedStressScaleViewSet(viewsets.ModelViewSet):
+    serializer_class = PerceivedStressScaleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
