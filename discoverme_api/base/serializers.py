@@ -10,3 +10,13 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = JournalEntry
         fields = ['id', 'title', 'content', 'created_at']  # Do not include 'user' field
+
+class SuggestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Suggestion
+        fields = ['id', 'mood_trigger', 'suggestion_text']
+
+class GoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Goal
+        fields = ['id', 'title', 'description', 'completed', 'created_at', 'due_date']

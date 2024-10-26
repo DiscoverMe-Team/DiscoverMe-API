@@ -9,6 +9,9 @@ from rest_framework_simplejwt.views import (
 router = DefaultRouter()
 router.register(r'moodlogs', views.MoodLogViewSet, basename='moodlog')
 router.register(r'journalentries', views.JournalEntryViewSet, basename='journalentry')
+router.register(r'suggestions', views.SuggestionViewSet, basename='suggestion')
+router.register(r'goals', views.GoalViewSet, basename='goal')
+
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
