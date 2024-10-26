@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import MoodLog, JournalEntry
-from .serializers import MoodLogSerializer, JournalEntrySerializer
+from .models import MoodLog, JournalEntry, Suggestion, Goal
+from .serializers import MoodLogSerializer, JournalEntrySerializer, SuggestionSerializer, GoalSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class MoodLogViewSet(viewsets.ModelViewSet):

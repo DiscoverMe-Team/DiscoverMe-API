@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MoodLog, JournalEntry
+from .models import MoodLog, JournalEntry, Suggestion, Goal
 
 class MoodLogSerializer(serializers.ModelSerializer):
     class Meta:
