@@ -66,6 +66,7 @@ Before getting started, ensure you have the following tools installed:
    Before running, you will need to set up the initial database schema for your db file, run:
 
    ```
+   cd discoverme_api # Switch to the project sub-repo containing the manage.py
    python manage.py makemigrations
    python manage.py migrate
    ```
