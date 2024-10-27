@@ -6,6 +6,10 @@ class MoodSerializer(serializers.ModelSerializer):
         model = Mood
         fields = ['id', 'mood_type', 'mood_description']  # Do not include 'user' field
 
+class MoodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mood
+        fields = ['id', 'mood_type', 'mood_description']  # Do not include 'user' field
 class MoodLogSerializer(serializers.ModelSerializer):
     mood = MoodSerializer()  # Nesting MoodSerializer to show mood details
     
