@@ -1,7 +1,11 @@
 from rest_framework import serializers
-from .models import MoodLog, JournalEntry
+from .models import Mood, MoodLog, JournalEntry
 from .models import Suggestion, Goal, Insight, PHQ9, GAD7, PerceivedStressScale
 
+class MoodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mood
+        fields = ['id', 'mood_type', 'mood_description']  # Do not include 'user' field
 class MoodLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoodLog
