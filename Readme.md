@@ -1,6 +1,18 @@
 
 # DiscoverMe API
-
+##IMPORTANT!
+When developing your issue, make sure you switch to the branch that corresponds to your issue. For example:
+   ```
+   git pull
+   git checkout Issue-3 # This will move you to a branch dedicated to your issue so that you wont have any merge cnflicts when developing
+   ```
+Now you are on branch Isse-3. once that is done, commit your change, then push it.
+   ```
+   git add .
+   git comit -m " A message"
+   git push
+   ```
+Finally create a pull request for your issue. This is done in the GitHub Portal.
 ## Overview
 
 Welcome to the DiscoverMe API repository! This API serves as the backend for the DiscoverMe project, providing mood logging, journal entry management, and mental health insights. It uses Django and Django REST Framework to create a scalable, secure API that connects with the frontend (Vue.js).
@@ -54,6 +66,7 @@ Before getting started, ensure you have the following tools installed:
    Before running, you will need to set up the initial database schema for your db file, run:
 
    ```
+   cd discoverme_api # Switch to the project sub-repo containing the manage.py
    python manage.py makemigrations
    python manage.py migrate
    ```

@@ -4,4 +4,5 @@ from .models import MoodLog, Mood
 admin.site.register(MoodLog)
 admin.site.register(Mood)
 
-# Register your models here.
+from .models import JournalEntry #added by Zachary
+admin.site.register(JournalEntry) #added by Zachary
