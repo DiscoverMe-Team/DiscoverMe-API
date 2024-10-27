@@ -9,6 +9,14 @@ from rest_framework_simplejwt.views import (
 router = DefaultRouter()
 router.register(r'moodlogs', views.MoodLogViewSet, basename='moodlog')
 router.register(r'journalentries', views.JournalEntryViewSet, basename='journalentry')
+router.register(r'suggestions', views.SuggestionViewSet, basename='suggestion')
+router.register(r'goals', views.GoalViewSet, basename='goal')
+router.register(r'insights', views.InsightViewSet, basename='insight')
+router.register(r'phq9', views.PHQ9ViewSet, basename='phq9')
+router.register(r'gad7', views.GAD7ViewSet, basename='gad7')
+router.register(r'perceived_stress_scale', views.PerceivedStressScaleViewSet, basename='perceived_stress_scale')
+
+
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
