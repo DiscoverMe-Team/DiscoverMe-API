@@ -1,3 +1,4 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import JournalEntry #added by Zachary
+admin.site.register(JournalEntry) #added by Zachary
