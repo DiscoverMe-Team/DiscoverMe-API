@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 router = DefaultRouter()
+router.register(r'mood', views.MoodLogViewSet, basename='mood')
 router.register(r'moodlogs', views.MoodLogViewSet, basename='moodlog')
 router.register(r'journalentries', views.JournalEntryViewSet, basename='journalentry')
 router.register(r'suggestions', views.SuggestionViewSet, basename='suggestion')

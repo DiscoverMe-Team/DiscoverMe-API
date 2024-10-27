@@ -2,9 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from .utils import calculate_gad7_score, calculate_phq9_score, calculate_perceived_stress_score
 
+class Mood(models.Model):
+    mood_type = models.CharField(max_length=10)
+    mood_description = models.TextField()
+    
+    def __str__(self):
+        return f'{self.mood_type}'
+
 class MoodLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    mood = models.CharField(max_length=50)
+    mood = models.ForeignKey(Mood, on_delete=models.CASCADE)
     date_logged = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
 
