@@ -68,7 +68,7 @@ Before getting started, ensure you have the following tools installed:
    ```
    cd discoverme_api # Switch to the project sub-repo containing the manage.py
    python manage.py makemigrations
-   python manage.py migrate
+   python manage.py migrate --run-syncdb
    ```
 
 6. **Create a Superuser (Admin Account)**
