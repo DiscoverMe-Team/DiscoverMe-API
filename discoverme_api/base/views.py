@@ -9,6 +9,10 @@ class MoodViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Mood.objects.all()
+    
+    def perform_create(self, serializer):
+        serializer.save()
+        
 
 class MoodLogViewSet(viewsets.ModelViewSet):
     serializer_class = MoodLogSerializer
