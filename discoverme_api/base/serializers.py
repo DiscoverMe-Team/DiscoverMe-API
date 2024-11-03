@@ -30,11 +30,13 @@ class SuggestionSerializer(serializers.ModelSerializer):
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goal
-        fields = ['id', 'title', 'description', 'completed', 'created_at', 'due_date']
+        fields = ['id', 'user', 'category', 'title', 'description', 'completed', 
+                  'start_date', 'times_per_day', 'days_per_week', 
+                  'duration', 'duration_unit']
 
 class InsightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Insight
-        fields = ['id', 'most_frequent_mood', 'mood_trend', 'stress_related_entries_count', 'suggested_action', 'created_at']
+        fields = ['id', 'user', 'trigger_word', 'time_quantity', 'time_frame', 'mood_count', 'created_at']
 
 
