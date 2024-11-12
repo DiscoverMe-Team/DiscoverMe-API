@@ -79,7 +79,14 @@ Before getting started, ensure you have the following tools installed:
    python manage.py createsuperuser
    ```
 
-7. **Run the Development Server**
+7. **Populate the database**
+
+   You’ll need to add test data to the database by running the folowing
+   ```
+   python manage.py populate_data
+   ```
+
+8. **Run the Development Server**
 
    Start the Django development server to test locally:
 
