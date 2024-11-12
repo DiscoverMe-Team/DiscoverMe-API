@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.shortcuts import redirect
 from base import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -18,6 +19,7 @@ router.register(r'insights', views.InsightViewSet, basename='insight')
 
 
 urlpatterns = [
+    path('', lambda request: redirect('admin/', permanent=True)),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/register/', views.register_user, name='register_user'),
