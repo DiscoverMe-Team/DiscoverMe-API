@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError
 from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight
 from .serializers import MoodSerializer, MoodLogSerializer, JournalEntrySerializer, SuggestionSerializer, GoalSerializer, InsightSerializer
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
 
 class MoodViewSet(viewsets.ModelViewSet):
     serializer_class = MoodSerializer
@@ -72,6 +73,7 @@ class InsightViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+@csrf_exempt
 @api_view(['POST'])
 def register_user(request):
     username = request.data.get('username')
