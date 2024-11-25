@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Mood(models.Model):
     mood_type = models.CharField(max_length=10)
@@ -77,3 +78,22 @@ class Insight(models.Model):
     def __str__(self):
         return f"Mood Insight Trends for {self.user.username} on {self.trigger_word} over {self.time_frame}"
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    location = models.CharField(max_length=255, blank=True, null=True)
+    occupation = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    pronouns = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f"Profile for {self.user.username}"
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

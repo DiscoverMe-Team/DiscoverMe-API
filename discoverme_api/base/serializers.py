@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Mood,MoodLog, JournalEntry,Suggestion, Goal, Insight
+from .models import Mood,MoodLog, JournalEntry,Suggestion, Goal, Insight, UserProfile
 
 class MoodSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,4 +34,7 @@ class InsightSerializer(serializers.ModelSerializer):
         model = Insight
         fields = ['id', 'user', 'trigger_word', 'time_quantity', 'time_frame', 'mood_count', 'created_at']
 
-
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['location', 'occupation', 'city', 'state', 'pronouns']

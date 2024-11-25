@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.decorators import api_view,  permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
-from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight
-from .serializers import MoodSerializer, MoodLogSerializer, JournalEntrySerializer, SuggestionSerializer, GoalSerializer, InsightSerializer
+from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, UserProfile
+from .serializers import MoodSerializer, MoodLogSerializer, JournalEntrySerializer, SuggestionSerializer, GoalSerializer, InsightSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 
@@ -72,6 +73,14 @@ class InsightViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class UserProfileView(RetrieveUpdateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
 
 @csrf_exempt
 @api_view(['POST'])
