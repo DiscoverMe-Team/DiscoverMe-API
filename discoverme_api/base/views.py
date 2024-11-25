@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,  permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -26,7 +26,7 @@ class MoodLogViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Only return mood logs for the authenticated user
-        return MoodLog.objects.filter(user=self.request.user)
+        return MoodLog.objects.filter(user=self.request.user).order_by('-date_logged')
 
     def perform_create(self, serializer):
         # Automatically associate the created mood log with the logged-in user
@@ -94,3 +94,15 @@ def register_user(request):
 
     user = User.objects.create_user(username=username, email=email, password=password)
     return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_info(request):
+    user = request.user
+    return Response({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+    })
