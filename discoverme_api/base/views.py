@@ -138,20 +138,102 @@ def register_user(request):
     user = User.objects.create_user(username=username, email=email, password=password)
     return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_info(request):
     """
-    API endpoint to retrieve basic information about the authenticated user.
+    API endpoint to retrieve detailed information about the authenticated user.
 
     Method: GET
     """
     user = request.user
+    profile = user.profile  # Assuming a OneToOneField relation to UserProfile
+
     return Response({
         'id': user.id,
         'username': user.username,
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'occupation': profile.occupation,  # From UserProfile
+        'city': profile.city,              # From UserProfile
+        'state': profile.state,            # From UserProfile
+        'pronouns': profile.pronouns,      # From UserProfile
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """
+    API endpoint for authenticated users to change their password.
+
+    Method: POST
+    """
+    user = request.user
+    current_password = request.data.get('current_password')
+    new_password = request.data.get('new_password')
+
+    # Validate that both fields are provided
+    if not current_password or not new_password:
+        return Response({'error': 'Both current and new passwords are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the current password is correct
+    if not user.check_password(current_password):
+        return Response({'error': 'Current password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validate the new password
+    try:
+        validate_password(new_password, user=user)
+    except ValidationError as e:
+        return Response({'error': e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update the password
+    user.set_password(new_password)
+    user.save()
+    return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_user_details(request):
+    """
+    API endpoint to update user details (except username).
+    Method: PUT
+    """
+    user = request.user
+    profile = user.profile
+
+    # Data from the request
+    first_name = request.data.get('first_name')
+    last_name = request.data.get('last_name')
+    email = request.data.get('email')
+    occupation = request.data.get('occupation')
+    city = request.data.get('city')
+    state = request.data.get('state')
+    pronouns = request.data.get('pronouns')
+
+    # Validate email
+    if email and User.objects.exclude(pk=user.pk).filter(email=email).exists():
+        return Response({'error': 'This email is already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update User fields
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
+    if email:
+        user.email = email
+
+    # Update UserProfile fields
+    if occupation:
+        profile.occupation = occupation
+    if city:
+        profile.city = city
+    if state:
+        profile.state = state
+    if pronouns:
+        profile.pronouns = pronouns
+    user.save()
+    profile.save()
+
+    return Response({'message': 'User details updated successfully.'}, status=status.HTTP_200_OK)
