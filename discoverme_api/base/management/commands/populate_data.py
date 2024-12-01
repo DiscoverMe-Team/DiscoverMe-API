@@ -2,13 +2,13 @@ import random
 from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from base.models import Mood, MoodLog, JournalEntry, Goal, Insight
+from base.models import Mood, MoodLog, JournalEntry, Goal, Insight, Task
 
 class Command(BaseCommand):
     """
     Django management command to populate the database with dummy data
     for testing purposes. This includes users, moods, mood logs, journal entries,
-    goals, and insights.
+    goals, tasks, and insights.
     """
     help = 'Populate database with dummy data for testing.'
 
@@ -22,6 +22,7 @@ class Command(BaseCommand):
         parser.add_argument('--num-moodlogs', type=int, default=10, help='Number of mood logs to create')
         parser.add_argument('--num-journalentries', type=int, default=5, help='Number of journal entries to create')
         parser.add_argument('--num-goals', type=int, default=6, help='Number of goals to create')
+        parser.add_argument('--num-tasks-per-goal', type=int, default=3, help='Number of tasks per goal to create')
         parser.add_argument('--num-insights', type=int, default=5, help='Number of insights to create')
 
     def handle(self, *args, **kwargs):
@@ -36,13 +37,14 @@ class Command(BaseCommand):
         num_moodlogs = kwargs['num_moodlogs']
         num_journalentries = kwargs['num_journalentries']
         num_goals = kwargs['num_goals']
+        num_tasks_per_goal = kwargs['num_tasks_per_goal']
         num_insights = kwargs['num_insights']
 
         self.create_users()
         self.create_moods()
         self.create_mood_logs(num_moodlogs)
         self.create_journal_entries(num_journalentries)
-        self.create_goals(num_goals)
+        self.create_goals_and_tasks(num_goals, num_tasks_per_goal)
         self.create_insights(num_insights)
         self.stdout.write(self.style.SUCCESS('Successfully populated the database with dummy data.'))
 
@@ -182,17 +184,18 @@ class Command(BaseCommand):
 
         self.stdout.write(f'Created {total_created} journal entries.')
 
-    def create_goals(self, num):
+    def create_goals_and_tasks(self, num_goals, num_tasks):
         """
-        Create dummy goals for all test users.
+        Create dummy goals and associated tasks for all test users.
         """
         users = User.objects.filter(username__startswith='testuser')
         categories = ['FIT', 'HABIT', 'EAT', 'SLEEP', 'STRESS', 'BAD', 'GROWTH']
-        total_created = 0
+        total_goals = 0
+        total_tasks = 0
 
         for user in users:
-            for i in range(num):
-                Goal.objects.create(
+            for i in range(num_goals):
+                goal = Goal.objects.create(
                     user=user,
                     category=random.choice(categories),
                     title=f"Goal {i + 1}",
@@ -204,9 +207,17 @@ class Command(BaseCommand):
                     duration=random.randint(1, 12),
                     duration_unit=random.choice(['DAYS', 'WEEKS', 'MONTHS'])
                 )
-                total_created += 1
+                total_goals += 1
 
-        self.stdout.write(f'Created {total_created} goals.')
+                for j in range(num_tasks):
+                    Task.objects.create(
+                        goal=goal,
+                        text=f"Task {j + 1} for {goal.title}",
+                        completed=random.choice([True, False])
+                    )
+                    total_tasks += 1
+
+        self.stdout.write(f'Created {total_goals} goals and {total_tasks} tasks.')
 
     def create_insights(self, num):
         """

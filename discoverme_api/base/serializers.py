@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, UserProfile
+from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, UserProfile, Task
 
 class MoodSerializer(serializers.ModelSerializer):
     """
@@ -39,16 +39,29 @@ class SuggestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'mood_trigger', 'suggestion_text']
 
 
+class TaskSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Task model.
+    """
+    class Meta:
+        model = Task
+        fields = ['id', 'goal', 'text', 'completed']
+        read_only_fields = ['goal']  # Ensure the task is always linked to its parent goal
+
+
 class GoalSerializer(serializers.ModelSerializer):
     """
     Serializer for the Goal model.
+    Includes nested tasks.
     """
+    tasks = TaskSerializer(many=True, read_only=True)  # Automatically fetch all related tasks
+
     class Meta:
         model = Goal
         fields = [
-            'id', 'user', 'category', 'title', 'description', 'completed', 
+            'id', 'category', 'title', 'description', 'completed', 
             'start_date', 'times_per_day', 'days_per_week', 
-            'duration', 'duration_unit'
+            'duration', 'duration_unit', 'tasks'
         ]
 
 
@@ -59,7 +72,7 @@ class InsightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Insight
         fields = [
-            'id', 'user', 'trigger_word', 'time_quantity', 
+            'id', 'trigger_word', 'time_quantity', 
             'time_frame', 'mood_count', 'created_at'
         ]
 

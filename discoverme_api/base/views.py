@@ -7,10 +7,11 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
-from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, UserProfile
+from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, Task, UserProfile
 from .serializers import (
     MoodSerializer, MoodLogSerializer, JournalEntrySerializer, 
-    SuggestionSerializer, GoalSerializer, InsightSerializer, UserProfileSerializer
+    SuggestionSerializer, GoalSerializer, InsightSerializer, UserProfileSerializer,
+    TaskSerializer
 )
 
 
@@ -80,7 +81,11 @@ class GoalViewSet(viewsets.ModelViewSet):
         return Goal.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        try:
+            serializer.save(user=self.request.user)
+        except Exception as e:
+            print("Error in GoalViewSet.perform_create:", e)  # Debugging
+            raise e
 
 
 class InsightViewSet(viewsets.ModelViewSet):
@@ -107,6 +112,30 @@ class UserProfileView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.profile
+
+class TaskViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing Task objects.
+    """
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Retrieve tasks associated with the authenticated user's goals.
+        """
+        return Task.objects.filter(goal__user=self.request.user)
+
+    def perform_create(self, serializer):
+        """
+        Save the task to the goal owned by the authenticated user.
+        """
+        goal_id = self.request.data.get('goal')
+        try:
+            goal = Goal.objects.get(id=goal_id, user=self.request.user)
+            serializer.save(goal=goal)
+        except Goal.DoesNotExist:
+            raise ValidationError({'error': 'Goal not found or does not belong to the user.'})
 
 
 @csrf_exempt

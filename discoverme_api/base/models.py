@@ -122,19 +122,50 @@ class Goal(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Self Growth')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='GROWTH')
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     completed = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
     times_per_day = models.PositiveBigIntegerField(default=1)
     days_per_week = models.PositiveIntegerField(default=1)
-    duration = models.PositiveIntegerField(default=1, help_text="How long will this goal last?")
+    duration = models.PositiveIntegerField(default=1)
     duration_unit = models.CharField(max_length=10, choices=DURATION_UNIT_CHOICES, default='WEEKS')
 
-    def __str__(self):
-        return f"{self.title} for {self.user.username}"
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'start_date']),
+        ]
 
+    def __str__(self):
+        return f"{self.title} ({self.category}) for {self.user.username}"
+
+class Task(models.Model):
+    """
+    Represents a task associated with a specific goal.
+
+    Tasks are individual actionable items that belong to a goal. Each task 
+    has a description, completion status, and a relationship with the parent goal.
+
+    :param goal: The goal to which this task belongs.
+    :type goal: Goal
+    :param text: A short description of the task.
+    :type text: str
+    :param completed: Indicates whether the task has been completed.
+    :type completed: bool
+    """
+    goal = models.ForeignKey(Goal, related_name='tasks', on_delete=models.CASCADE)
+    text = models.CharField(max_length=255)
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        """
+        Returns a string representation of the task, including its completion status.
+
+        :return: A string describing the task and its completion status.
+        :rtype: str
+        """
+        return f"Task: {self.text} (Completed: {self.completed})"
 
 class Insight(models.Model):
     """
