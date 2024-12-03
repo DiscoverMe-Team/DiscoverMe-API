@@ -30,4 +30,5 @@ urlpatterns = [
     path('profile/', views.UserProfileView.as_view(), name='user-profile'),
     path('api/auth/change-password/', views.change_password, name='change_password'),
     path('api/auth/update-user/', views.update_user_details, name='update_user_details'),
+    path('api/auth/check-email/', views.check_email, name='check_email'),
 ]

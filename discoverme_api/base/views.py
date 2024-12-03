@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.csrf import csrf_exempt
 from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, Task, UserProfile
 from .serializers import (
@@ -165,7 +166,16 @@ def register_user(request):
         return Response({'error': 'Email already registered.'}, status=status.HTTP_400_BAD_REQUEST)
 
     user = User.objects.create_user(username=username, email=email, password=password)
-    return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+
+    # Generate JWT tokens for the user
+    refresh = RefreshToken.for_user(user)
+    access = refresh.access_token
+
+    return Response({
+        'message': 'User registered successfully.',
+        'access': str(access),
+        'refresh': str(refresh)
+    }, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -266,3 +276,9 @@ def update_user_details(request):
     profile.save()
 
     return Response({'message': 'User details updated successfully.'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def check_email(request):
+    email = request.data.get('email')
+    is_available = not User.objects.filter(email=email).exists()
+    return Response({'isAvailable': is_available})
