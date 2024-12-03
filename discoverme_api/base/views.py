@@ -139,43 +139,41 @@ class TaskViewSet(viewsets.ModelViewSet):
             raise ValidationError({'error': 'Goal not found or does not belong to the user.'})
 
 
+from django.http import JsonResponse
+
 @csrf_exempt
 @api_view(['POST'])
 def register_user(request):
-    """
-    API endpoint for user registration.
-
-    Method: POST
-    """
-    username = request.data.get('username')
-    email = request.data.get('email')
-    password = request.data.get('password')
-
-    if not username or not email or not password:
-        return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
     try:
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not username or not email or not password:
+            return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
         validate_password(password)
-    except ValidationError as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username=username).exists():
+            return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'Email already registered.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.create_user(username=username, email=email, password=password)
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
 
-    if User.objects.filter(email=email).exists():
-        return Response({'error': 'Email already registered.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'message': 'User registered successfully.',
+            'access': str(access),
+            'refresh': str(refresh)
+        }, status=status.HTTP_201_CREATED)
 
-    user = User.objects.create_user(username=username, email=email, password=password)
-
-    # Generate JWT tokens for the user
-    refresh = RefreshToken.for_user(user)
-    access = refresh.access_token
-
-    return Response({
-        'message': 'User registered successfully.',
-        'access': str(access),
-        'refresh': str(refresh)
-    }, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        print(f"Error: {e}")
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
