@@ -1,3 +1,4 @@
+import re
 from rest_framework import viewsets, status
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -5,7 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.views.decorators.csrf import csrf_exempt
 from .models import Mood, MoodLog, JournalEntry, Suggestion, Goal, Insight, Task, UserProfile
@@ -60,15 +61,16 @@ class JournalEntryViewSet(viewsets.ModelViewSet):
 
 class SuggestionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for managing Suggestion objects.
+    API endpoint for managing user suggestions.
     """
     serializer_class = SuggestionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_moods = MoodLog.objects.filter(user=self.request.user).values_list('mood__mood_type', flat=True)
-        return Suggestion.objects.filter(mood_trigger__in=user_moods)
+        return Suggestion.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class GoalViewSet(viewsets.ModelViewSet):
     """
@@ -143,28 +145,56 @@ from django.http import JsonResponse
 
 @csrf_exempt
 @api_view(['POST'])
+@permission_classes([AllowAny]) 
 def register_user(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    """
+    API endpoint for user registration.
 
+    Method: POST
+    Body Parameters:
+    - username: str (required)
+    - email: str (required)
+    - password: str (required)
+    """
     try:
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
+        # Extract data from the request
+        username = request.data.get('username', '').strip()
+        email = request.data.get('email', '').strip()
+        password = request.data.get('password', '').strip()
 
+        # Validate required fields
         if not username or not email or not password:
             return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        validate_password(password)
+        # Validate username format
+        if not re.match(r'^[a-zA-Z0-9_.-]+$', username):
+            return Response({'error': 'Username can only contain letters, numbers, and ._- characters.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate email format
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            return Response({'error': 'Invalid email format.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate password using Django's built-in validators
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            # Catch ValidationError explicitly for password issues
+            return Response({'error': ' '.join(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for existing username or email
         if User.objects.filter(username=username).exists():
             return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(email=email).exists():
             return Response({'error': 'Email already registered.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Create the user
         user = User.objects.create_user(username=username, email=email, password=password)
+
+        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
 
+        # Return a success response with tokens
         return Response({
             'message': 'User registered successfully.',
             'access': str(access),
@@ -172,8 +202,9 @@ def register_user(request):
         }, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        print(f"Error: {e}")
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Log the error for debugging
+        print(f"Error during registration: {e}")
+        return Response({'error': 'An unexpected error occurred. Please try again.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -36,7 +36,8 @@ class SuggestionSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Suggestion
-        fields = ['id', 'mood_trigger', 'suggestion_text']
+        fields = ['id', 'user', 'text', 'completed', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 
 class TaskSerializer(serializers.ModelSerializer):

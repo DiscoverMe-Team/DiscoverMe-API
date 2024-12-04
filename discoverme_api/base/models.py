@@ -61,8 +61,7 @@ class JournalEntry(models.Model):
 
     def __str__(self):
         return f'{self.title} by {self.user.username}'
-
-
+    
 class Suggestion(models.Model):
     """
     Provides suggestions based on mood triggers.
@@ -72,8 +71,10 @@ class Suggestion(models.Model):
     :param suggestion_text: The suggestion provided for the trigger.
     :type suggestion_text: str
     """
-    mood_trigger = models.CharField(max_length=50)
-    suggestion_text = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suggestions')
+    text = models.TextField()
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Suggestion for {self.mood_trigger}"
@@ -222,6 +223,7 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     pronouns = models.CharField(max_length=50, blank=True, null=True)
+    first_login = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Profile for {self.user.username}"
