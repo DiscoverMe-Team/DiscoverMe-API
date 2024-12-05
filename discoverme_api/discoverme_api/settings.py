@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from corsheaders.defaults import default_headers
+import boto3
+import json
+
+def get_secret(secret_name):
+    client = boto3.client('secretsmanager', region_name='us-east-1')
+    response = client.get_secret_value(SecretId=secret_name)
+    return json.loads(response['SecretString'])
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -93,10 +100,16 @@ WSGI_APPLICATION = 'discoverme_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+secret = get_secret('DiscoverMePublicDBCredentials')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': secret['dbname'], 
+        'USER': secret['username'],
+        'PASSWORD': secret['password'],
+        'HOST': secret['host'],
+        'PORT': secret['port'],
     }
 }
 
