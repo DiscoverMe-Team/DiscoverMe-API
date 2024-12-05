@@ -15,9 +15,13 @@ from datetime import timedelta
 from corsheaders.defaults import default_headers
 import boto3
 import json
+import os
 
-def get_secret(secret_name):
-    client = boto3.client('secretsmanager', region_name='us-east-1')
+def get_secret():
+    secret_name = os.getenv('DISCOVERME_SECRET_NAME')
+    if not secret_name:
+        raise EnvironmentError('DISCOVERME_SECRET_NAME environment variable not set')
+    client = boto3.client('secretsmanager')
     response = client.get_secret_value(SecretId=secret_name)
     return json.loads(response['SecretString'])
 
@@ -100,7 +104,7 @@ WSGI_APPLICATION = 'discoverme_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-secret = get_secret('DiscoverMePublicDBCredentials')
+secret = get_secret()
 
 DATABASES = {
     'default': {
