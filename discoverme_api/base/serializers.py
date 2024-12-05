@@ -46,25 +46,24 @@ class TaskSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Task
-        fields = ['id', 'goal', 'text', 'completed']
-        read_only_fields = ['goal']  # Ensure the task is always linked to its parent goal
-
+        fields = ['id', 'goal', 'text', 'completed', 'completed_on']
+        read_only_fields = ['goal', 'completed_on']  # Prevent modifications to `completed_on`
 
 class GoalSerializer(serializers.ModelSerializer):
     """
     Serializer for the Goal model.
     Includes nested tasks.
     """
-    tasks = TaskSerializer(many=True, read_only=True)  # Automatically fetch all related tasks
+    tasks = TaskSerializer(many=True, read_only=True)
 
     class Meta:
         model = Goal
         fields = [
-            'id', 'category', 'title', 'description', 'completed', 
-            'start_date', 'times_per_day', 'days_per_week', 
-            'duration', 'duration_unit', 'tasks'
+            'id', 'category', 'title', 'description', 'completed',
+            'completed_on', 'start_date', 'times_per_day', 
+            'days_per_week', 'duration', 'duration_unit', 'tasks'
         ]
-
+        read_only_fields = ['completed_on']
 
 class InsightSerializer(serializers.ModelSerializer):
     """

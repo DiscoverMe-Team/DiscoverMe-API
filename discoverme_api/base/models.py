@@ -127,6 +127,7 @@ class Goal(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     completed = models.BooleanField(default=False)
+    completed_on = models.DateTimeField(blank=True, null=True)
     start_date = models.DateTimeField(auto_now_add=True)
     times_per_day = models.PositiveBigIntegerField(default=1)
     days_per_week = models.PositiveIntegerField(default=1)
@@ -158,6 +159,7 @@ class Task(models.Model):
     goal = models.ForeignKey(Goal, related_name='tasks', on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
     completed = models.BooleanField(default=False)
+    completed_on = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         """

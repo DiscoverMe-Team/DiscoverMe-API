@@ -1,8 +1,9 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
-from .models import Suggestion
+from .models import Suggestion, Task, Goal
+from django.utils.timezone import now
 
 @receiver(post_save, sender=User)
 def generate_suggestions_for_new_user(sender, instance, created, **kwargs):
@@ -47,3 +48,20 @@ def handle_first_login(sender, request, user, **kwargs):
         user.profile.first_login = False
         user.profile.save()
         print(f"Suggestions generated for first login: {user.username}")
+
+@receiver(pre_save, sender=Task)
+def update_task_completed_on(sender, instance, **kwargs):
+    """
+    Updates the completed_on field when the completed status of a Task changes to True.
+    """
+    if instance.completed and not instance.completed_on:
+        instance.completed_on = now()
+
+
+@receiver(pre_save, sender=Goal)
+def update_goal_completed_on(sender, instance, **kwargs):
+    """
+    Updates the completed_on field when the completed status of a Goal changes to True.
+    """
+    if instance.completed and not instance.completed_on:
+        instance.completed_on = now()
