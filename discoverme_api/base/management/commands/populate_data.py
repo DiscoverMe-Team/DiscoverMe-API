@@ -22,6 +22,7 @@ class Command(BaseCommand):
         parser.add_argument('--num-tasks-per-goal', type=int, default=3, help='Number of tasks per goal to create')
         parser.add_argument('--num-insights', type=int, default=5, help='Number of insights to create')
         parser.add_argument('--num-suggestions', type=int, default=10, help='Number of suggestions to create')
+        parser.add_argument('--only-moods', action='store_true', help='Populate only moods')
 
     def handle(self, *args, **kwargs):
         """
@@ -116,11 +117,12 @@ class Command(BaseCommand):
         Create predefined moods.
         """
         moods = [
-            {'mood_type': 'happy', 'description': 'Feeling joyful and satisfied.'},
-            {'mood_type': 'stressed', 'description': 'Overwhelmed by tasks and deadlines.'},
-            {'mood_type': 'relaxed', 'description': 'Feeling calm and at ease.'},
-            {'mood_type': 'motivated', 'description': 'Eager to tackle challenges.'},
-            {'mood_type': 'tired', 'description': 'Lacking energy and feeling drained.'},
+            {'mood_type': 'happy', 'description': 'Feeling joyful, content, and satisfied.'},
+            {'mood_type': 'sad', 'description': 'Feeling downhearted, disappointed, or upset.'},
+            {'mood_type': 'angry', 'description': 'Feeling frustrated, irritated, or upset about something.'},
+            {'mood_type': 'anxious', 'description': 'Feeling nervous, worried, or uneasy about upcoming events or uncertainties.'},
+            {'mood_type': 'excited', 'description': 'Feeling thrilled, enthusiastic, and full of anticipation.'},
+            {'mood_type': 'neutral', 'description': 'Feeling indifferent, balanced, or neither positive nor negative.'},
         ]
 
         for mood in moods:

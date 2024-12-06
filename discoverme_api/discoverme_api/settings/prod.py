@@ -4,7 +4,8 @@ import json
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['discovermeapp.com']
+ALLOWED_HOSTS = ['discovermeapp.com','https://discovermeapp.com',
+    'https://www.discovermeapp.com', 'www.discovermeapp.com']
 
 # Secrets Manager
 def get_secret():
