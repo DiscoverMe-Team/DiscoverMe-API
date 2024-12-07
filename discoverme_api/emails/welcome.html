@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to DiscoverMe</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #8e44ad, #3498db);
+            color: #4B4B4B; /* Matches --text-color */
+            text-align: center;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: linear-gradient(to bottom, #F8E8F2, #E3DFF5); /* Matches --background-gradient */
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+        .header {
+            background: #8A2BE2; /* Matches --primary-color */
+            padding: 20px;
+            color: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        .header img {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        .content {
+            padding: 20px;
+            color: #4B4B4B; /* Matches --text-color */
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background: #8A2BE2; /* Matches --primary-color */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        .cta-button:hover {
+            background: #A779E9; /* Matches --primary-color-light */
+        }
+        .footer {
+            background: #F8E8F2; /* Matches --background-gradient-start */
+            padding: 10px;
+            font-size: 14px;
+            color: #B3B3B3; /* Matches --text-color-secondary */
+        }
+        .footer a {
+            color: #8A2BE2; /* Matches --primary-color */
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://discovermeapp.com/logo.png" alt="DiscoverMe Logo"> 
+            <h1>Welcome to DiscoverMe</h1>
+        </div>
+        <div class="content">
+            <p>Hello,</p>
+            <p>Thank you for joining <strong>DiscoverMe</strong>. We're thrilled to have you on board!</p>
+            <p>Start exploring and managing your moods, goals, and well-being with our easy-to-use tools.</p>
+            <p><a href="https://discovermeapp.com/auth/login" class="cta-button">Log in to your account</a></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 DiscoverMe. All rights reserved.</p>
+            <p><a href="https://discovermeapp.com">Visit our website</a></p>
+        </div>
+    </div>
+</body>
+</html>
