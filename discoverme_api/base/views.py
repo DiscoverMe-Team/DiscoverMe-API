@@ -15,6 +15,8 @@ from .serializers import (
     SuggestionSerializer, GoalSerializer, InsightSerializer, UserProfileSerializer,
     TaskSerializer
 )
+from emails.messages import send_password_change_email
+
 
 
 class MoodViewSet(viewsets.ModelViewSet):
@@ -259,6 +261,13 @@ def change_password(request):
     # Update the password
     user.set_password(new_password)
     user.save()
+
+    # Send email notification
+    try:
+        send_password_change_email(user)
+    except Exception as e:
+        print(f"Failed to send password change email: {str(e)}")
+
     return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
